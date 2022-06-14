@@ -40,7 +40,7 @@
     - name: ensure artifact is built
       shell: mvn package -f /tmp/boxfuse-sample-java-war-hello/
 
-    - name: ensure artifact is uploaded from builder
+    - name: ensure artifact is uploaded to web
       synchronize:
         src: /tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war
         dest: /var/lib/tomcat9/webapps/hello-1.0.war
