@@ -14,7 +14,7 @@
         - maven
 
     - name: ensuring the repo checkout exists
-      ansible.builtin.git:
+      git:
         repo: 'https://github.com/boxfuse/boxfuse-sample-java-war-hello.git'
         dest: /tmp/boxfuse-sample-java-war-hello
         update: yes
