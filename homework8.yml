@@ -41,8 +41,9 @@
         - tomcat
 
     - name: ensure tomcat is started
-      service: tomcat
-      state: started
+      service:
+        name: tomcat
+        state: started
 
     - name: ensure package is uploaded
       copy:
