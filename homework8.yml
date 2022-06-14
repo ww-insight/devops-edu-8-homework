@@ -38,14 +38,14 @@
         state: present
       with_items:
         - default-jdk
-        - tomcat
+        - tomcat9
 
     - name: ensure tomcat is started
       service:
-        name: tomcat
+        name: tomcat9
         state: started
 
     - name: ensure package is uploaded
       copy:
         src: /tmp/hello-1.0.war
-        dest: /usr/local/tomcat/webapps
+        dest: /var/lib/tomcat9/webapps
