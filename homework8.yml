@@ -1,22 +1,4 @@
 ---
-- name: prepare web
-  hosts: web
-  become: yes
-
-  tasks:
-    - name: Ensure all packages is present
-      apt:
-        name: "{{ item }}"
-        state: present
-      with_items:
-        - default-jdk
-        - tomcat9
-
-    - name: ensure tomcat is started
-      service:
-        name: tomcat9
-        state: started
-
 - name: prepare builder
   hosts: builder
   become: yes
@@ -37,11 +19,31 @@
         dest: /tmp/boxfuse-sample-java-war-hello
         update: yes
 
-    - name: ensure if package is built
+    - name: ensure artifact is built
       shell: mvn package -f /tmp/boxfuse-sample-java-war-hello/
 
-    - name: Synchronize two directories on one remote host.
+- name: prepare web
+  hosts: web
+  become: yes
+
+  tasks:
+    - name: Ensure all packages is present
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - default-jdk
+        - tomcat9
+
+    - name: ensure tomcat is started
+      service:
+        name: tomcat9
+        state: started
+
+    - name: ensure artifact is uploaded from builder
       synchronize:
         src: /tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war
         dest: /var/lib/tomcat9/webapps/hello-1.0.war
-      delegate_to: "{{ web }}"
+        mode: pull
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['web'] }}"
