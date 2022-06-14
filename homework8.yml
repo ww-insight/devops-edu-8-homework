@@ -6,7 +6,7 @@
   tasks:
     - name: Ensure all packages installed
       apt:
-        name: {{ item }}
+        name: "{{ item }}"
         state: present
       with_items:
         - git
@@ -34,7 +34,7 @@
   tasks:
     - name: Ensure all packages is present
       apt:
-        name: {{ item }}
+        name: "{{ item }}"
         state: present
       with_items:
         - default-jdk
