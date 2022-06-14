@@ -1,0 +1,50 @@
+---
+- name: prepare builder
+  hosts: builder
+  become: yes
+
+  tasks:
+    - name: Ensure all packages installed
+      apt:
+        name: {{ item }}
+        state: present
+      with_items:
+        - git
+        - default-jdk
+        - maven
+
+    - name: ensuring the repo checkout exists
+      ansible.builtin.git:
+        repo: 'https://github.com/boxfuse/boxfuse-sample-java-war-hello.git'
+        dest: /tmp/boxfuse-sample-java-war-hello
+        update: yes
+
+    - name: ensure if package is built
+      shell: mvn package -f /tmp/boxfuse-sample-java-war-hello/
+
+    - name: ensure if package is fetched
+      fetch:
+        src: /tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war
+        dest: /tmp/hello-1.0.war
+
+- name: prepare web
+  hosts: web
+  become: yes
+
+  tasks:
+    - name: Ensure all packages is present
+      apt:
+        name: {{ item }}
+        state: present
+      with_items:
+        - default-jdk
+        - tomcat
+
+    - name: ensure tomcat is started
+      service: tomcat
+      state: started
+
+    - name: ensure package is uploaded
+      copy:
+        src: /tmp/hello-1.0.war
+        dest: /usr/local/tomcat/webapps
